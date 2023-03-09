@@ -94,8 +94,6 @@ export const signup = ErrorHandler(async (req, res, next) => {
 
 
 
-
-
 // SignIn
 
 export const signin = ErrorHandler(async (req, res, next) => {
@@ -109,20 +107,30 @@ export const signin = ErrorHandler(async (req, res, next) => {
 
         if (match) {
 
-            const token = jwt.sign({
 
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                age: user.age,
-                emailConfirm: user.emailConfirm,
-                isActive: user.isActive,
-                phone: user.phone,
-                profileImg: user.profileImg,
+            if (user.emailConfirm) {
 
-            }, process.env.SECRET_KEY_SIGNIN);
+                const token = jwt.sign({
 
-            res.status(200).json({ message: "Success", token });
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    age: user.age,
+                    emailConfirm: user.emailConfirm,
+                    isActive: user.isActive,
+                    phone: user.phone,
+                    role: user.role,
+                    profileImg: user.profileImg,
+
+                }, process.env.SECRET_KEY_SIGNIN);
+
+                res.status(200).json({ message: "Success", token });
+
+            } else {
+
+                res.status(400).json({ message: "Please Confirm Your Email Then Try Again" });
+
+            };
 
 
         } else {
@@ -138,3 +146,135 @@ export const signin = ErrorHandler(async (req, res, next) => {
     };
 
 });
+
+
+
+
+
+
+
+
+// Confirm Your Email
+
+export const confirmation = ErrorHandler(async (req, res, next) => {
+
+    const { token } = req.params;
+
+    jwt.verify(token, process.env.SECRET_KEY_SIGNUP, async function (err, decoded) {
+
+
+        if (err) {
+
+            res.status(400).json({ message: "Invalid Token", err });
+
+        } else {
+
+            const user = await userModel.findOne({ email: decoded.email });
+
+            if (user) {
+
+                user.emailConfirm = true;
+                await user.save();
+
+                res.status(200).json({ message: "Successfully Email Confirmed" });
+
+            } else {
+
+                res.status(400).json({ message: "User Not Found" });
+
+            };
+
+        };
+
+
+    });
+
+});
+
+
+
+
+
+
+
+
+// Authentication 
+
+export const Authentication = ErrorHandler(async (req, res, next) => {
+
+    const token = req.headers.token;
+
+    jwt.verify(token, process.env.SECRET_KEY_SIGNIN, async function (err, decoded) {
+
+
+        if (err) {
+
+            res.status(400).json({ message: "Invalid Token", err });
+
+        } else {
+
+            const user = await userModel.findOne({ _id: decoded.id });
+
+            if (user) {
+
+                if (user.passwordChangedAt) {
+
+
+                    if (user.passwordChangedAt > decoded.iat) {
+
+                        const time = new Date(user.passwordChangedAt * 1000);
+                        res.status(400).json({ message: `Password Changed At ${time}` });
+
+                    } else {
+
+                        req.user = user;
+                        next();
+
+                    };
+
+
+                } else {
+
+                    req.user = user;
+                    next();
+
+                };
+
+            } else {
+
+                res.status(400).json({ message: "User Not Found" });
+
+            };
+
+        };
+
+    });
+
+});
+
+
+
+
+
+
+
+// Authorization
+
+
+export const Authorization = (roles) => {
+
+    return (req, res, next) => {
+
+        if (roles.includes(req.user.role)) {
+
+            next();
+
+        } else {
+
+            res.status(400).json({ message: "You Not Authorized To Do That" });
+
+        };
+
+    };
+
+};

@@ -145,7 +145,7 @@ export const updateSpecificUser = ErrorHandler(async (req, res, next) => {
             bcrypt.hash(req.body.password, 5, async function (err, hash) {
 
                 req.body.password = hash;
-
+                req.body.passwordChangedAt = parseInt(Date.now() / 1000);
 
                 if (req.file) {
 
@@ -244,7 +244,6 @@ export const deleteSpecificUser = ErrorHandler(async (req, res, next) => {
 
 
 
-
 // Change Password 
 
 export const changePassword = ErrorHandler(async (req, res, next) => {
@@ -258,6 +257,7 @@ export const changePassword = ErrorHandler(async (req, res, next) => {
         bcrypt.hash(req.body.password, 5, async function (err, hash) {
 
             user.password = hash;
+            user.passwordChangedAt = parseInt(Date.now() / 1000);
             await user.save();
 
             res.status(200).json({ message: "Success Change Password", data: user });
