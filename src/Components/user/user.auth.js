@@ -4,7 +4,7 @@ import cloudinary from 'cloudinary';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import confirmEmail from '../../Utils/confirmEmail.js';
-
+import sendResetCodeToEmail from '../../Utils/sendResetCode.js';
 
 
 
@@ -260,7 +260,6 @@ export const Authentication = ErrorHandler(async (req, res, next) => {
 
 // Authorization
 
-
 export const Authorization = (roles) => {
 
     return (req, res, next) => {
@@ -278,3 +277,109 @@ export const Authorization = (roles) => {
     };
 
 };
+
+
+
+
+
+
+// Send Reset Code
+
+export const sendResetCode = ErrorHandler(async (req, res, next) => {
+
+    const user = await userModel.findOne({ email: req.body.email });
+
+
+    if (user) {
+
+        const randomCode = Math.floor((Math.random() * 1000000) + 1).toString();
+
+        bcrypt.hash(randomCode, 5, async function (err, hash) {
+
+            user.resetCode = hash;
+            await user.save();
+
+            sendResetCodeToEmail(randomCode, user.email, user.name);
+
+            res.status(200).json({ message: "Success Send Reset Code", data: { id: user._id } });
+
+        });
+
+    } else {
+
+        res.status(400).json({ message: `This Email: ${req.body.email} Doesn't Exists` });
+
+    };
+
+});
+
+
+
+
+
+
+// Verify Reset Code
+
+export const verifyResetCode = ErrorHandler(async (req, res, next) => {
+
+    const id = req.headers.id;
+    const user = await userModel.findOne({ _id: id });
+
+    if (user) {
+
+        const match = await bcrypt.compare(req.body.code, user.resetCode);
+
+        if (match) {
+
+            res.status(200).json({ message: "Success Reset Code , now will redirect to change Your Password", data: { id: user._id } });
+
+        } else {
+
+            res.status(400).json({ message: "The verification code you entered isn't valid. Please check the code and try again." });
+
+        };
+
+    } else {
+
+        res.status(400).json({ message: "User Not Found" });
+
+    };
+
+});
+
+
+
+
+
+
+
+
+// Change Password After Confirm Reset Code
+
+export const changePasswordAfterConfirmResetCode = ErrorHandler(async (req, res, next) => {
+
+    const id = req.headers.id;
+    const user = await userModel.findOne({ _id: id });
+
+
+    if (user) {
+
+        bcrypt.hash(req.body.newPassword, 5, async function (err, hash) {
+
+            user.password = hash;
+            user.passwordChangedAt = parseInt(Date.now() / 1000);
+            user.resetCode = null;
+
+            await user.save();
+
+            res.status(200).json({ message: "Success Change Password", data: user });
+
+        });
+
+    } else {
+
+        res.status(400).json({ message: "User Not Found" });
+
+    };
+
+});
