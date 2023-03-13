@@ -63,6 +63,7 @@ export const signup = ErrorHandler(async (req, res, next) => {
         bcrypt.hash(req.body.password, 5, async function (err, hash) {
 
             req.body.password = hash;
+            req.body.role = "user";
 
 
             if (req.file) {

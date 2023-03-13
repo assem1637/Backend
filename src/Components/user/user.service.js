@@ -74,10 +74,14 @@ export const createNewUser = ErrorHandler(async (req, res, next) => {
         bcrypt.hash(req.body.password, 5, async function (err, hash) {
 
 
+            console.log(req.file);
+
             if (req.file) {
 
                 const cloud = await cloudinary.uploader.upload(req.file.path);
                 req.body.profileImg = cloud.secure_url;
+
+                console.log(cloud.secure_url);
 
             };
 
