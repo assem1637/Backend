@@ -23,7 +23,7 @@ const couponSchema = mongoose.Schema({
 
     discount: {
 
-        type: String,
+        type: Number,
         required: [true, "Discount Of Coupon Is Required"],
 
     },

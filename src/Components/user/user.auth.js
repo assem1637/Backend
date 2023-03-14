@@ -369,7 +369,7 @@ export const changePasswordAfterConfirmResetCode = ErrorHandler(async (req, res,
 
             user.password = hash;
             user.passwordChangedAt = parseInt(Date.now() / 1000);
-            user.resetCode = null;
+            user.resetCode = undefined;
 
             await user.save();
 

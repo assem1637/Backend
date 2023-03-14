@@ -12,9 +12,19 @@ const router = Router();
 
 
 
-router.route("/").get(Authentication, Authorization(["admin"]), getAllUsers).post(Authentication, Authorization(["admin"]), uploadSingleImage("profileImg"), createNewUser);
-router.route("/:id").get(Authentication, Authorization(["admin"]), getSpecificUser).put(Authentication, Authorization(["admin", "user"]), uploadSingleImage("profileImg"), updateSpecificUser).delete(Authentication, Authorization(["admin"]), deleteSpecificUser).patch(Authentication, Authorization(["admin", "user"]), changePassword);
+router.route("/")
+    .get(Authentication, Authorization(["admin"]), getAllUsers)
+    .post(Authentication, Authorization(["admin"]), uploadSingleImage("profileImg"), createNewUser);
 
+
+router.route("/:id")
+    .get(Authentication, Authorization(["admin"]), getSpecificUser)
+    .put(Authentication, Authorization(["admin", "user"]), uploadSingleImage("profileImg"), updateSpecificUser)
+    .delete(Authentication, Authorization(["admin"]), deleteSpecificUser);
+
+
+
+router.patch("/changePassword/:id", Authentication, Authorization(["admin", "user"]), changePassword);
 
 
 router.post("/signup", uploadSingleImage("profileImg"), signup);
@@ -22,7 +32,7 @@ router.post("/signin", signin);
 router.get("/confirm/:token", confirmation);
 
 
-router.post("/sendResetCode", sendResetCode);
+router.post("/forgetPassword", sendResetCode);
 router.post("/verifyResetCode", verifyResetCode);
 router.post("/changePasswordAfterConfirmResetCode", changePasswordAfterConfirmResetCode);
 

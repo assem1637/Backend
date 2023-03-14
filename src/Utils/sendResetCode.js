@@ -20,7 +20,7 @@ const sendResetCodeToEmail = async (code, email, name) => {
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-        from: '"E-Shop 👻" <support@eshop.com>', // sender address
+        from: '"E-Shop 👻" <assemsaeed16378@outlook.com>', // sender address
         to: email, // list of receivers
         subject: `${name}, this is your PIN code ✔`, // Subject line
         text: `${name}, this is your PIN code`, // plain text body

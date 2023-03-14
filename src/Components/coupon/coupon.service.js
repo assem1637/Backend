@@ -55,7 +55,7 @@ export const createNewCoupon = ErrorHandler(async (req, res, next) => {
 
     } else {
 
-        const time = Date.now() + ((Number(req.body.expire * 1) > 0 ? Number(req.body.expire * 1) : 1) * 60 * 60 * 1000);
+        const time = Date.now() + ((Number(req.body.expire * 1) > 0 ? Number(req.body.expire * 1) : 1) * 24 * 60 * 60 * 1000);
         req.body.expire = time;
 
         const newCoupon = new couponModel(req.body);
@@ -102,14 +102,14 @@ export const updateSpecificCoupon = ErrorHandler(async (req, res, next) => {
 
     if (req.body.expire) {
 
-        const time = Date.now() + ((Number(req.body.expire * 1) > 0 ? Number(req.body.expire * 1) : 1) * 60 * 60 * 1000);
+        const time = Date.now() + ((Number(req.body.expire * 1) > 0 ? Number(req.body.expire * 1) : 1) * 24 * 60 * 60 * 1000);
         req.body.expire = time;
 
     };
 
 
 
-    const coupon = await couponModel.findOneAndUpdate({ _id: req.params.id });
+    const coupon = await couponModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
 
     if (coupon) {
 

@@ -141,6 +141,7 @@ export const updateSpecificUser = ErrorHandler(async (req, res, next) => {
 
     const user = await userModel.findOne({ _id: req.params.id });
 
+
     if (user) {
 
 
@@ -161,10 +162,20 @@ export const updateSpecificUser = ErrorHandler(async (req, res, next) => {
 
                 if (req.body.email) {
 
-                    if (!(req.body.email == user.email)) {
+                    const email = await userModel.findOne({ email: req.body.email });
 
-                        const token = jwt.sign({ email: req.body.email }, process.env.SECRET_KEY_SIGNUP);
-                        confirmEmail(req.body.email, token, req.protocol, req.headers.host);
+                    if (email) {
+
+                        res.status(400).json({ message: "This Email Already Used" });
+
+                    } else {
+
+                        if (!(req.body.email == user.email)) {
+
+                            const token = jwt.sign({ email: req.body.email }, process.env.SECRET_KEY_SIGNUP);
+                            confirmEmail(req.body.email, token, req.protocol, req.headers.host);
+
+                        };
 
                     };
 
@@ -192,10 +203,20 @@ export const updateSpecificUser = ErrorHandler(async (req, res, next) => {
 
             if (req.body.email) {
 
-                if (!(req.body.email == user.email)) {
+                const email = await userModel.findOne({ email: req.body.email });
 
-                    const token = jwt.sign({ email: req.body.email }, process.env.SECRET_KEY_SIGNUP);
-                    confirmEmail(req.body.email, token, req.protocol, req.headers.host);
+                if (email) {
+
+                    res.status(400).json({ message: "This Email Already Used" });
+
+                } else {
+
+                    if (!(req.body.email == user.email)) {
+
+                        const token = jwt.sign({ email: req.body.email }, process.env.SECRET_KEY_SIGNUP);
+                        confirmEmail(req.body.email, token, req.protocol, req.headers.host);
+
+                    };
 
                 };
 
@@ -254,6 +275,8 @@ export const changePassword = ErrorHandler(async (req, res, next) => {
 
     const user = await userModel.findOne({ _id: req.params.id });
 
+    console.log(user);
+    console.log(req.params.id);
 
     if (user) {
 

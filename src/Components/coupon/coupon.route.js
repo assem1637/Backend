@@ -5,13 +5,18 @@ import { Authentication, Authorization } from '../user/user.auth.js';
 
 
 
-
-
 const router = Router();
 
 
-router.route("/").get(Authentication, Authorization(["admin"]), getAllCoupons).post(Authentication, Authorization(["admin"]), createNewCoupon);
-router.route("/:id").get(Authentication, Authorization(["admin"]), getSpecificCoupon).put(Authentication, Authorization(["admin"]), updateSpecificCoupon).delete(Authentication, Authorization(["admin"]), deleteSpecificCoupon);
+router.route("/")
+    .get(Authentication, Authorization(["admin"]), getAllCoupons)
+    .post(Authentication, Authorization(["admin"]), createNewCoupon);
+
+
+router.route("/:id")
+    .get(Authentication, Authorization(["admin"]), getSpecificCoupon)
+    .put(Authentication, Authorization(["admin"]), updateSpecificCoupon)
+    .delete(Authentication, Authorization(["admin"]), deleteSpecificCoupon);
 
 
 
