@@ -93,6 +93,39 @@ const userSchema = mongoose.Schema({
     resetCode: String,
 
 
+    wishlist: [
+
+        {
+
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "product",
+
+        },
+
+    ],
+
+
+
+    addressDelivery: [
+
+        {
+
+            name: String,
+            address: String,
+            phone: String,
+            location: {
+
+                type: String,
+                enum: ["home", "work"],
+                default: "home",
+
+            },
+
+        },
+
+    ],
+
+
 }, { timestamps: true });
 
 
