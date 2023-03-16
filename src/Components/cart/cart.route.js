@@ -1,8 +1,6 @@
 import { Router } from 'express';
-import { getAllCarts, addProductToMyCart, getCartOfUser, updateQuantity, deleteProductFromMyCart } from './cart.service.js';
+import { allCarts, addProductToMyCart, getCartOfUser, updateQuantity, deleteProductFromMyCart } from './cart.service.js';
 import { Authentication, Authorization } from '../user/user.auth.js';
-
-
 
 
 
@@ -11,17 +9,16 @@ import { Authentication, Authorization } from '../user/user.auth.js';
 const router = Router();
 
 
+router.get("/allCarts", allCarts);
 
 router.route("/")
-    .get(Authentication, Authorization(["admin"]), getAllCarts)
-    .post(Authentication, Authorization(["user"]), addProductToMyCart);
-
+    .get(Authentication, Authorization(["user"]), getCartOfUser)
+    .post(Authentication, Authorization(["user"]), addProductToMyCart)
+    .delete(Authentication, Authorization(["user"]), deleteProductFromMyCart);
 
 
 router.route("/:id")
-    .get(Authentication, Authorization(["user"]), getCartOfUser)
-    .patch(Authentication, Authorization(["user"]), updateQuantity)
-    .delete(Authentication, Authorization(["user"]), deleteProductFromMyCart);
+    .patch(Authentication, Authorization(["user"]), updateQuantity);
 
 
 
