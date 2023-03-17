@@ -9,7 +9,7 @@ const router = Router();
 
 
 router.route("/")
-    .get(Authentication, Authorization(["admin"]), getAllCoupons)
+    .get(getAllCoupons)
     .post(Authentication, Authorization(["admin"]), createNewCoupon);
 
 

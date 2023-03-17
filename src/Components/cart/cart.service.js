@@ -1,5 +1,6 @@
 import cartModel from "./cart.model.js";
 import productModel from '../product/product.model.js';
+import couponModel from "../coupon/coupon.model.js";
 import AppError from "../../Utils/appErrors.js";
 
 
@@ -72,7 +73,7 @@ export const getCartOfUser = ErrorHandler(async (req, res, next) => {
 
     } else {
 
-        res.status(400).json({ message: "Cart Not Found" });
+        res.status(400).json({ message: "Your Cart Is Empty" });
 
     };
 
@@ -198,9 +199,44 @@ export const addProductToMyCart = ErrorHandler(async (req, res, next) => {
 
 export const updateQuantity = ErrorHandler(async (req, res, next) => {
 
+    const myCart = await cartModel.findOne({ user: req.user._id });
 
+    if (myCart) {
+
+        const productInMyCart = myCart.cartItems.find((ele) => ele.product == req.body.product);
+
+        if (productInMyCart) {
+
+            productInMyCart.quantity = req.body.quantity;
+
+
+            let totalPrice = calcTotalPrice(myCart);
+            let discount = 0;
+            let totalPriceAfterDiscount = Number(totalPrice) - Number(discount);
+
+            myCart.totalPrice = totalPrice;
+            myCart.discount = discount;
+            myCart.totalPriceAfterDiscount = totalPriceAfterDiscount;
+
+            await myCart.save();
+
+            res.status(200).json({ message: "Success Updated Quantity", data: myCart });
+
+        } else {
+
+            res.status(400).json({ message: "Product Not Found" });
+
+        };
+
+    } else {
+
+        res.status(400).json({ message: "Your Cart Is Empty" });
+
+    };
 
 });
+
+
 
 
 
@@ -263,7 +299,7 @@ export const deleteProductFromMyCart = ErrorHandler(async (req, res, next) => {
                 if (productInMyCart) {
 
                     await cartModel.findByIdAndDelete({ _id: myCart._id });
-                    res.status(200).json({ message: "Now Your Cart Is Empty" });
+                    res.status(200).json({ message: "Your Cart Is Empty" });
 
                 } else {
 
@@ -281,7 +317,103 @@ export const deleteProductFromMyCart = ErrorHandler(async (req, res, next) => {
 
     } else {
 
-        res.status(400).json({ message: "Cart Not Found" });
+        res.status(400).json({ message: "Your Cart Is Empty" });
+
+    };
+
+});
+
+
+
+
+
+
+
+
+// Apply Coupon
+
+export const applyCoupon = ErrorHandler(async (req, res, next) => {
+
+    const myCart = await cartModel.findOne({ user: req.user._id });
+
+    if (myCart) {
+
+        const coupon = await couponModel.findOne({ code: req.body.coupon });
+
+        if (coupon) {
+
+            if (myCart.discount > 0) {
+
+                res.status(400).json({ message: "There is already an active coupon" });
+
+            } else {
+
+
+                let totalPrice = calcTotalPrice(myCart);
+                let discount = coupon.discount;
+                let totalPriceAfterDiscount = Number(totalPrice) - Number(discount);
+
+                myCart.totalPrice = totalPrice;
+                myCart.discount = discount;
+                myCart.totalPriceAfterDiscount = totalPriceAfterDiscount;
+
+                await myCart.save();
+
+                res.status(200).json({ message: "Hurray! You got a discount!", data: myCart });
+
+            };
+
+        } else {
+
+            res.status(400).json({ message: "Oops! Coupon code invalid" });
+
+        };
+
+    } else {
+
+        res.status(400).json({ message: "Your Cart Is Empty" });
+
+    };
+
+});
+
+
+
+
+
+
+
+// Remove Apply Coupon
+
+export const removeApplyCoupon = ErrorHandler(async (req, res, next) => {
+
+    const myCart = await cartModel.findOne({ user: req.user._id });
+
+    if (myCart) {
+
+        if (myCart.discount > 0) {
+
+            let totalPrice = calcTotalPrice(myCart);
+            let discount = 0;
+            let totalPriceAfterDiscount = Number(totalPrice) - Number(discount);
+
+            myCart.totalPrice = totalPrice;
+            myCart.discount = discount;
+            myCart.totalPriceAfterDiscount = totalPriceAfterDiscount;
+
+            await myCart.save();
+
+            res.status(200).json({ message: "Success Remove Coupon", data: myCart });
+
+        } else {
+
+            res.status(400).json({ message: "Already Not Exists Apply Coupon" });
+
+        };
+
+    } else {
+
+        res.status(400).json({ message: "Your Cart Is Empty" });
 
     };
 
