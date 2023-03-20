@@ -52,6 +52,31 @@ app.use(express.json({ limit: "20kb" }));
 
 
 
+
+
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), (req, res, next) => {
+    const sig = request.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, "whsec_kRHZDUw9vg6tKpZDbJIScaYFDS5cJ7Sx");
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    };
+
+
+    if (event.type === 'checkout.session.completed') {
+
+        console.log(event.data);
+
+    };
+
+});
+
+
+
+
 if (process.env.MODE_NOW === "development") {
 
     app.use(morgan("dev"));
