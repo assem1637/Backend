@@ -95,6 +95,9 @@ const payWithVisa = async (cartId, email) => {
     console.log(myCart);
     console.log(user);
 
+    const cartItems = myCart.cartItems;
+    const userOrder = myCart.user;
+    const payedAt = Date.now();
     const totalPrice = myCart.totalPriceAfterDiscount;
     const taxPrice = 0;
     const shippingPrice = 0;
@@ -102,10 +105,10 @@ const payWithVisa = async (cartId, email) => {
     const addressDelivery = user.addressDelivery[user.addressDelivery.length - 1];
 
 
-    const newOrder = new orderModel({
+    const newOrder = await orderModel.insertMany({
 
-        cartItems: myCart.cartItems,
-        user: myCart.user,
+        cartItems,
+        user: userOrder,
         totalPrice,
         taxPrice,
         shippingPrice,
@@ -113,13 +116,12 @@ const payWithVisa = async (cartId, email) => {
         paymentMethods: "visa",
         addressDelivery,
         isPayed: true,
-        payedAt: Date.now(),
+        payedAt,
 
 
     });
-    await newOrder.save();
 
-
+    console.log(newOrder);
 
     console.log("222");
     console.log(myCart);
