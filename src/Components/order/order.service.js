@@ -60,11 +60,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                     },
 
-                    metadata: {
-
-                        client_reference_id: myCart._id,
-
-                    }
+                    client_reference_id: myCart._id,
                 },
             ],
             mode: 'payment',
