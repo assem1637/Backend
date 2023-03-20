@@ -53,7 +53,6 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                             name: myCart._id,
 
-
                         },
 
                         unit_amount: myCart.totalPriceAfterDiscount * 100,
