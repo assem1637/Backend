@@ -68,6 +68,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
             cancel_url: `${req.protocol}://${req.headers.host}/api/v1/cart`,
             customer_details: myCart._id,
             customer_email: cartId,
+            client_reference_id: myCart.id,
         });
 
 
