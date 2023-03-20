@@ -3,6 +3,7 @@ import cartModel from '../cart/cart.model.js';
 import productModel from '../product/product.model.js';
 import AppError from '../../Utils/appErrors.js';
 import Stripe from "stripe";
+import userModel from "../user/user.model.js";
 
 
 
@@ -67,6 +68,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
             success_url: `${req.protocol}://${req.headers.host}/api/v1/success`,
             cancel_url: `${req.protocol}://${req.headers.host}/api/v1/cart`,
             client_reference_id: myCart.id,
+            customer_email: req.user.email,
         });
 
 
@@ -85,23 +87,21 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
 
 
-export const payWithVisa = async (cartId) => {
-
-    console.log(cartId);
+const payWithVisa = async (cartId, email) => {
 
     const myCart = await cartModel.findById(cartId);
-    console.log(myCart);
+    const user = await userModel.findOne({ email });
 
-    req.body.cartItems = myCart.cartItems;
-    req.body.user = myCart.user;
-    req.body.totalPrice = myCart.totalPriceAfterDiscount;
-    req.body.taxPrice = 0;
-    req.body.shippingPrice = 0;
-    req.body.totalPriceAfterExtraPrice = Number(req.body.totalPrice) - (Number(req.body.taxPrice) + Number(req.body.shippingPrice));
-    req.body.paymentMethods = "visa";
-    req.body.addressDelivery = req.user.addressDelivery[req.user.addressDelivery.length - 1];
-    req.body.isPayed = true;
-    req.body.payedAt = Date.now();
+
+    console.log(myCart);
+    console.log(user);
+
+
+    const totalPrice = myCart.totalPriceAfterDiscount;
+    const taxPrice = 0;
+    const shippingPrice = 0;
+    const totalPriceAfterExtraPrice = Number(totalPrice) - (Number(taxPrice) + Number(shippingPrice));
+    const addressDelivery = user.addressDelivery[user.addressDelivery.length - 1];
 
     myCart.cartItems.forEach(async (ele) => {
 
@@ -117,7 +117,21 @@ export const payWithVisa = async (cartId) => {
     myCart.cartItems = [];
     await cartModel.findOneAndDelete({ _id: myCart._id });
 
-    const newOrder = new orderModel(req.body);
+    const newOrder = new orderModel({
+
+        cartItems: myCart.cartItems,
+        user: myCart.user,
+        totalPrice,
+        taxPrice,
+        shippingPrice,
+        totalPriceAfterExtraPrice,
+        paymentMethods: "visa",
+        addressDelivery,
+        isPayed: true,
+        payedAt: Date.now(),
+
+
+    });
     await newOrder.save();
 
 };
@@ -144,7 +158,7 @@ export const webhookCheckout = ErrorHandler(async (req, res, next) => {
 
     if (event.type == 'checkout.session.completed') {
 
-        payWithVisa(event.data.object.client_reference_id);
+        payWithVisa(event.data.object.client_reference_id, event.data.object.customer_email);
 
     };
 
