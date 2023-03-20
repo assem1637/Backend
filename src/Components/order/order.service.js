@@ -87,7 +87,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
 export const paymentWithVisa = ErrorHandler(async (cartId) => {
 
-    const myCart = await cartModel.findOne({ _id: cartId });
+    const myCart = await cartModel.findById(cartId.client_reference_id);
     console.log(myCart);
 
     req.body.cartItems = myCart.cartItems;
