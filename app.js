@@ -66,7 +66,7 @@ app.post('/webhook-checkout', express.raw({ type: 'application/json' }), (req, r
     };
 
 
-    if (event.type === 'checkout.session.completed') {
+    if (event.type == 'checkout.session.completed') {
 
         console.log(event.data);
 
