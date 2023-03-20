@@ -90,10 +90,11 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 export const webhookCheckout = ErrorHandler(async (req, res, next) => {
     const sig = request.headers['stripe-signature'];
 
+    console.log(sig);
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(req.body, sig, "whsec_kRHZDUw9vg6tKpZDbJIScaYFDS5cJ7Sx");
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.WEBHOOK);
     } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     };
