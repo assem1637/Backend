@@ -88,19 +88,20 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 // Webhook Checkout
 
 export const webhookCheckout = ErrorHandler(async (req, res, next) => {
-    let sig = req.headers['stripe-signature'];
+    const sig = req.headers['stripe-signature'];
 
-    console.log(sig);
+
     let event;
 
     try {
         event = stripe.webhooks.constructEvent(req.body, sig, process.env.WEBHOOK);
+        console.log(event);
     } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     };
 
 
-    if (event.type === 'checkout.session.completed') {
+    if (event.type == 'checkout.session.completed') {
 
         paymentWithVisa(event.data.object.client_reference_id);
 
