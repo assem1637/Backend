@@ -51,7 +51,13 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                         product_data: {
 
-                            name: myCart._id,
+                            name: req.use._id,
+
+                            metadata: {
+
+                                id: myCart.id,
+
+                            }
 
                         },
 
@@ -68,7 +74,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
         });
 
 
-        res.status(200).json({ message: "Success", data: session.url });
+        res.status(200).json({ message: "Success", data: session });
 
 
     } else {
