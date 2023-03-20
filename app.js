@@ -29,7 +29,7 @@ import wishlistRouter from './src/Components/wishlist/wishlist.route.js';
 import addressRouter from './src/Components/address/address.route.js';
 import cartRouter from './src/Components/cart/cart.route.js';
 import orderRouter from './src/Components/order/order.route.js';
-
+import { paymentWithVisa } from './src/Components/order/order.service.js';
 
 
 
@@ -69,8 +69,14 @@ app.post('/webhook-checkout', express.raw({ type: 'application/json' }), (req, r
     if (event.type == 'checkout.session.completed') {
 
         console.log(event.data);
+        console.log(event.data.name);
+
+        paymentWithVisa(event.data.name)
 
     };
+
+
+    res.status(200).json({ received: true });
 
 });
 

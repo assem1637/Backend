@@ -51,7 +51,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                         product_data: {
 
-                            name: req.user.name,
+                            name: myCart._id,
 
 
                         },
@@ -60,7 +60,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                     },
 
-                    client_reference_id: myCart._id,
+
                 },
             ],
             mode: 'payment',
@@ -83,6 +83,40 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 });
 
 
+
+export const paymentWithVisa = ErrorHandler(async (cartId) => {
+
+    const myCart = await cartModel.findOne({ _id: cartId });
+
+    req.body.cartItems = myCart.cartItems;
+    req.body.user = myCart.user;
+    req.body.totalPrice = myCart.totalPriceAfterDiscount;
+    req.body.taxPrice = 0;
+    req.body.shippingPrice = 0;
+    req.body.totalPriceAfterExtraPrice = Number(req.body.totalPrice) - (Number(req.body.taxPrice) + Number(req.body.shippingPrice));
+    req.body.paymentMethods = "visa";
+    req.body.addressDelivery = req.user.addressDelivery[req.user.addressDelivery.length - 1];
+    req.body.isPayed = true;
+    req.body.payedAt = Date.now();
+
+    myCart.cartItems.forEach(async (ele) => {
+
+        const product = await productModel.findOne({ _id: ele.product });
+        product.soldCount += 1;
+        product.quantity -= ele.quantity;
+
+        await product.save();
+
+    });
+
+
+    myCart.cartItems = [];
+    await cartModel.findOneAndDelete({ _id: myCart._id });
+
+    const newOrder = new orderModel(req.body);
+    await newOrder.save();
+
+});
 
 
 
