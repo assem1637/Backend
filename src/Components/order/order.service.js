@@ -51,7 +51,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                         product_data: {
 
-                            name: req.use._id,
+                            name: req.user._id,
 
                         },
 
