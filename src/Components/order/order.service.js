@@ -88,7 +88,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 // Webhook Checkout
 
 export const webhookCheckout = ErrorHandler(async (req, res, next) => {
-    const sig = request.headers['stripe-signature'];
+    let sig = req.headers['stripe-signature'];
 
     console.log(sig);
     let event;
