@@ -85,38 +85,9 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
 
 
-// Webhook Checkout
+export const payWithVisa = ErrorHandler(async (cartId) => {
 
-export const webhookCheckout = ErrorHandler(async (req, res, next) => {
-    const sig = req.headers['stripe-signature'];
-
-    console.log(sig);
-
-    let event;
-
-    try {
-        event = stripe.webhooks.constructEvent(req.body, sig, process.env.WEBHOOK);
-
-
-    } catch (err) {
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-    };
-
-
-    if (event.type === 'checkout.session.completed') {
-
-        paymentWithVisa(event.data.object.client_reference_id);
-
-    };
-
-
-    res.status(200).json({ received: true });
-
-})
-
-
-
-export const paymentWithVisa = ErrorHandler(async (cartId) => {
+    console.log(cartId);
 
     const myCart = await cartModel.findById(cartId);
     console.log(myCart);
@@ -150,6 +121,40 @@ export const paymentWithVisa = ErrorHandler(async (cartId) => {
     await newOrder.save();
 
 });
+
+
+
+// Webhook Checkout
+
+export const webhookCheckout = ErrorHandler(async (req, res, next) => {
+    const sig = req.headers['stripe-signature'];
+
+    console.log(sig);
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.WEBHOOK);
+
+
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    };
+
+
+    if (event.type == 'checkout.session.completed') {
+
+        payWithVisa(event.data.object.client_reference_id);
+
+    };
+
+
+    res.status(200).json({ received: true });
+
+})
+
+
+
 
 
 
