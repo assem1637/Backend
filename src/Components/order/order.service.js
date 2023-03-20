@@ -96,19 +96,22 @@ export const webhookCheckout = ErrorHandler(async (req, res, next) => {
 
     try {
         event = stripe.webhooks.constructEvent(req.body, sig, process.env.WEBHOOK);
+
+        if (event.type === 'checkout.session.completed') {
+
+            paymentWithVisa(event.data.object.client_reference_id);
+
+        };
+
+
+        res.status(200).json({ received: true });
+
     } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     };
 
 
-    if (event.type == 'checkout.session.completed') {
 
-        paymentWithVisa(event.data.object.client_reference_id);
-
-    };
-
-
-    res.status(200).json({ received: true });
 
 })
 
