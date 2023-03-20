@@ -68,7 +68,7 @@ app.post('/webhook-checkout', express.raw({ type: 'application/json' }), (req, r
 
     if (event.type == 'checkout.session.completed') {
 
-        paymentWithVisa(event.data.object.description);
+        paymentWithVisa(event.data.object.metadata.id);
 
     };
 

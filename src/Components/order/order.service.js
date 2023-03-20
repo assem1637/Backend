@@ -52,7 +52,6 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
                         product_data: {
 
                             name: req.user.name,
-                            description: myCart._id
 
                         },
 
@@ -67,6 +66,11 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
             success_url: `${req.protocol}://${req.headers.host}/api/v1/success`,
             cancel_url: `${req.protocol}://${req.headers.host}/api/v1/cart`,
             client_reference_id: myCart._id,
+            metadata: {
+
+                id: myCart._id,
+
+            },
         });
 
 
