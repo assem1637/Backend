@@ -14,6 +14,8 @@ dotenv.config({ path: "./config/.env" });
 
 
 import express from 'express';
+import cors from 'cors';
+import compression from 'compression';
 import morgan from 'morgan';
 import dbConnection from './src/DB/dbConnection.js';
 import AppError from './src/Utils/appErrors.js';
@@ -35,6 +37,15 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 dbConnection();
+
+
+// Enable Other Domains To Access The Routes
+app.use(cors());
+app.options('*', cors()) // include before other routes
+
+
+// compress all responses
+app.use(compression())
 
 
 app.use(express.json({ limit: "20kb" }));

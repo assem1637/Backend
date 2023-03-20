@@ -2,11 +2,11 @@ import orderModel from "./order.model.js";
 import cartModel from '../cart/cart.model.js';
 import productModel from '../product/product.model.js';
 import AppError from '../../Utils/appErrors.js';
+import Stripe from "stripe";
 
 
 
-
-
+const stripe = new Stripe("sk_test_51MnigUDNkxC8PssPgunMq4rao0OctIo8Aq2S8SoWxAkQOvpkBVjrHBgkGxkbXTmiLuYDoqabghABjj0kQs9XeoqY00KuKurOCG");
 
 
 
@@ -28,7 +28,56 @@ const ErrorHandler = (fun) => {
 
 
 
+// Create Session Checkout
 
+export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => {
+
+
+    const myCart = await cartModel.findOne({ user: req.user._id });
+
+
+    if (myCart) {
+
+
+        const session = await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                    quantity: 1,
+
+                    price_data: {
+
+                        currency: "usd",
+
+                        product_data: {
+
+                            name: "Assem Saeed",
+
+                        },
+
+                        unit_amount: myCart.totalPriceAfterDiscount * 100,
+
+                    }
+                },
+            ],
+            mode: 'payment',
+            success_url: `${req.protocol}://${req.headers.host}/api/v1/success`,
+            cancel_url: `${req.protocol}://${req.headers.host}/api/v1/cart`,
+        });
+
+
+        res.status(200).json({ message: "Success", data: session.url });
+
+
+    } else {
+
+        res.status(400).json({ message: "Cart Not Found" });
+
+    };
+
+
+
+});
 
 
 
@@ -113,6 +162,9 @@ export const createNewOrderPaymentCash = ErrorHandler(async (req, res, next) => 
     };
 
 });
+
+
+
 
 
 
