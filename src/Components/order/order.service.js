@@ -35,6 +35,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
     const myCart = await cartModel.findOne({ user: req.user._id });
 
+    const cartId = myCart._id;
 
     if (myCart) {
 
@@ -65,12 +66,8 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
             mode: 'payment',
             success_url: `${req.protocol}://${req.headers.host}/api/v1/success`,
             cancel_url: `${req.protocol}://${req.headers.host}/api/v1/cart`,
-            client_reference_id: myCart._id,
-            metadata: {
-
-                id: myCart._id,
-
-            },
+            customer_details: myCart._id,
+            customer_email: cartId,
         });
 
 
