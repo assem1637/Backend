@@ -85,9 +85,36 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
 
 
+// Webhook Checkout
+
+export const webhookCheckout = ErrorHandler(async (req, res, next) => {
+    const sig = request.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, "whsec_kRHZDUw9vg6tKpZDbJIScaYFDS5cJ7Sx");
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    };
+
+
+    if (event.type === 'checkout.session.completed') {
+
+        paymentWithVisa(event.data.object.client_reference_id);
+
+    };
+
+
+    res.status(200).json({ received: true });
+
+})
+
+
+
 export const paymentWithVisa = ErrorHandler(async (cartId) => {
 
-    const myCart = await cartModel.findById(cartId.client_reference_id);
+    const myCart = await cartModel.findById(cartId);
     console.log(myCart);
 
     req.body.cartItems = myCart.cartItems;
