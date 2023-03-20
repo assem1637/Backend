@@ -85,7 +85,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
 
 
-export const payWithVisa = ErrorHandler(async (cartId) => {
+export const payWithVisa = async (cartId) => {
 
     console.log(cartId);
 
@@ -120,7 +120,7 @@ export const payWithVisa = ErrorHandler(async (cartId) => {
     const newOrder = new orderModel(req.body);
     await newOrder.save();
 
-});
+};
 
 
 
