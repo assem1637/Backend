@@ -52,12 +52,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
                         product_data: {
 
                             name: req.user.name,
-
-                            metadata: {
-
-                                id: myCart._id,
-
-                            }
+                            description: myCart._id
 
                         },
 
