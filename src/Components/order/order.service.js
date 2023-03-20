@@ -92,17 +92,31 @@ const payWithVisa = async (cartId, email) => {
     const myCart = await cartModel.findById(cartId);
     const user = await userModel.findOne({ email });
 
-    console.log(myCart);
-    console.log(user);
 
 
-    const cartItems = myCart.cartItems;
-    const userOrder = myCart.user;
     const totalPrice = myCart.totalPriceAfterDiscount;
     const taxPrice = 0;
     const shippingPrice = 0;
     const totalPriceAfterExtraPrice = Number(totalPrice) - (Number(taxPrice) + Number(shippingPrice));
     const addressDelivery = user.addressDelivery[user.addressDelivery.length - 1];
+
+
+    const newOrder = new orderModel({
+
+        cartItems: myCart.cartItems,
+        user: myCart.user,
+        totalPrice,
+        taxPrice,
+        shippingPrice,
+        totalPriceAfterExtraPrice,
+        paymentMethods: "visa",
+        addressDelivery,
+        isPayed: true,
+        payedAt: Date.now(),
+
+
+    });
+    await newOrder.save();
 
     myCart.cartItems.forEach(async (ele) => {
 
@@ -118,22 +132,6 @@ const payWithVisa = async (cartId, email) => {
     myCart.cartItems = [];
     await cartModel.findOneAndDelete({ _id: myCart._id });
 
-    const newOrder = new orderModel({
-
-        cartItems,
-        user: userOrder,
-        totalPrice,
-        taxPrice,
-        shippingPrice,
-        totalPriceAfterExtraPrice,
-        paymentMethods: "visa",
-        addressDelivery,
-        isPayed: true,
-        payedAt: Date.now(),
-
-
-    });
-    await newOrder.save();
 
 };
 
