@@ -53,12 +53,6 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
 
                             name: req.use._id,
 
-                            metadata: {
-
-                                id: myCart._id,
-
-                            }
-
                         },
 
                         unit_amount: myCart.totalPriceAfterDiscount * 100,
@@ -71,6 +65,7 @@ export const createNewOrderPaymentVisa = ErrorHandler(async (req, res, next) => 
             mode: 'payment',
             success_url: `${req.protocol}://${req.headers.host}/api/v1/success`,
             cancel_url: `${req.protocol}://${req.headers.host}/api/v1/cart`,
+            client_reference_id: myCart._id,
         });
 
 
