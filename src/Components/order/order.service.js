@@ -92,11 +92,12 @@ const payWithVisa = async (cartId, email) => {
     const myCart = await cartModel.findById(cartId);
     const user = await userModel.findOne({ email });
 
-
     console.log(myCart);
     console.log(user);
 
 
+    const cartItems = myCart.cartItems;
+    const userOrder = myCart.user;
     const totalPrice = myCart.totalPriceAfterDiscount;
     const taxPrice = 0;
     const shippingPrice = 0;
@@ -119,8 +120,8 @@ const payWithVisa = async (cartId, email) => {
 
     const newOrder = new orderModel({
 
-        cartItems: myCart.cartItems,
-        user: myCart.user,
+        cartItems,
+        user: userOrder,
         totalPrice,
         taxPrice,
         shippingPrice,
