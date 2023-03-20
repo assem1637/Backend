@@ -48,14 +48,12 @@ app.options('*', cors()) // include before other routes
 app.use(compression())
 
 
-app.use(express.json({ limit: "20kb" }));
-
-
-
-
 
 app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout);
 
+
+
+app.use(express.json({ limit: "20kb" }));
 
 
 
