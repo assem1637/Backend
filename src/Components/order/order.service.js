@@ -92,7 +92,8 @@ const payWithVisa = async (cartId, email) => {
     const myCart = await cartModel.findById(cartId);
     const user = await userModel.findOne({ email });
 
-
+    console.log(myCart);
+    console.log(user);
 
     const totalPrice = myCart.totalPriceAfterDiscount;
     const taxPrice = 0;
@@ -117,6 +118,14 @@ const payWithVisa = async (cartId, email) => {
 
     });
     await newOrder.save();
+
+
+
+    console.log("222");
+    console.log(myCart);
+    console.log(user);
+
+
 
     myCart.cartItems.forEach(async (ele) => {
 
