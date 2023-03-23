@@ -1,5 +1,4 @@
 import orderModel from './order.model1.js';
-import userModel from '../user/user.model.js';
 import productModel from '../product/product.model.js';
 import cartModel from '../cart/cart.model.js';
 import AppError from '../../Utils/appErrors.js';
@@ -126,6 +125,70 @@ export const createNewOrderPaymentCash = ErrorHandler(async (req, res, next) => 
     } else {
 
         res.status(400).json({ message: "Your Cart Is Empty" });
+
+    };
+
+});
+
+
+
+
+
+
+
+
+// Update The Pay By Admin
+
+export const updateThePay = ErrorHandler(async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const specificOrder = await orderModel.findOne({ _id: id });
+
+    if (specificOrder) {
+
+        specificOrder.isPayed = true;
+        specificOrder.payedAt = Date.now();
+
+        await specificOrder.save();
+
+        res.status(200).json({ message: "Success Updated The Pay", data: specificOrder });
+
+    } else {
+
+        res.status(400).json({ message: "Order Not Found" });
+
+    };
+
+});
+
+
+
+
+
+
+
+
+// Update The Delivery By Admin
+
+export const updateTheDelivery = ErrorHandler(async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const specificOrder = await orderModel.findOne({ _id: id });
+
+    if (specificOrder) {
+
+        specificOrder.isDelivered = true;
+        specificOrder.deliveredAt = Date.now();
+
+        await specificOrder.save();
+
+        res.status(200).json({ message: "Success Updated The Delivery", data: specificOrder });
+
+    } else {
+
+        res.status(400).json({ message: "Order Not Found" });
 
     };
 
