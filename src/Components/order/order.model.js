@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
 
 
@@ -6,145 +6,145 @@ import mongoose from "mongoose";
 
 
 
-const orderSchema = mongoose.Schema({
+// const orderSchema = mongoose.Schema({
 
 
-    cartItems: [
+//     cartItems: [
 
-        {
+//         {
 
-            product: {
+//             product: {
 
-                type: mongoose.SchemaTypes.ObjectId,
-                ref: "product",
+//                 type: mongoose.SchemaTypes.ObjectId,
+//                 ref: "product",
 
-            },
+//             },
 
 
-            quantity: Number,
+//             quantity: Number,
 
-            price: Number,
+//             price: Number,
 
-        },
+//         },
 
-    ],
+//     ],
 
 
 
 
-    user: {
+//     user: {
 
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "user",
+//         type: mongoose.SchemaTypes.ObjectId,
+//         ref: "user",
 
-    },
+//     },
 
 
 
-    totalPrice: Number,
+//     totalPrice: Number,
 
-    discount: {
+//     discount: {
 
-        type: Number,
-        default: 0,
+//         type: Number,
+//         default: 0,
 
-    },
+//     },
 
 
-    taxPrice: {
+//     taxPrice: {
 
-        type: Number,
-        default: 0,
+//         type: Number,
+//         default: 0,
 
-    },
+//     },
 
 
-    shippingPrice: {
+//     shippingPrice: {
 
-        type: Number,
-        default: 0,
+//         type: Number,
+//         default: 0,
 
-    },
+//     },
 
 
 
-    totalPriceAfterExtraPrice: {
+//     totalPriceAfterExtraPrice: {
 
-        type: Number,
+//         type: Number,
 
-    },
+//     },
 
 
 
-    paymentMethods: {
+//     paymentMethods: {
 
-        type: String,
-        eunm: ["cash", "visa"],
-        default: "cash",
+//         type: String,
+//         eunm: ["cash", "visa"],
+//         default: "cash",
 
-    },
+//     },
 
 
 
-    isPayed: {
+//     isPayed: {
 
-        type: Boolean,
-        default: false,
+//         type: Boolean,
+//         default: false,
 
-    },
+//     },
 
 
 
-    payedAt: {
+//     payedAt: {
 
-        type: Date,
+//         type: Date,
 
-    },
+//     },
 
 
 
-    isDelivered: {
+//     isDelivered: {
 
-        type: Boolean,
-        default: false,
+//         type: Boolean,
+//         default: false,
 
-    },
+//     },
 
 
 
-    deliveredAt: {
+//     deliveredAt: {
 
-        type: Date,
+//         type: Date,
 
-    },
+//     },
 
 
 
 
-    addressDelivery: {
+//     addressDelivery: {
 
-        name: String,
-        address: String,
-        phone: String,
-        location: {
+//         name: String,
+//         address: String,
+//         phone: String,
+//         location: {
 
-            type: String,
-            enum: ["home", "work"],
-            default: "home",
+//             type: String,
+//             enum: ["home", "work"],
+//             default: "home",
 
-        },
+//         },
 
-    },
+//     },
 
 
 
-}, { timestamps: true });
+// }, { timestamps: true });
 
 
 
 
-const orderModel = mongoose.model("order", orderSchema);
+// const orderModel = mongoose.model("order", orderSchema);
 
 
 
-export default orderModel;
+// export default orderModel;
