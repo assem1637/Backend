@@ -112,6 +112,8 @@ export const createNewOrderPaymentCash = ErrorHandler(async (req, res, next) => 
             product.soldCount += 1;
             product.quantity -= ele.quantity;
 
+            await product.save();
+
         });
 
 
